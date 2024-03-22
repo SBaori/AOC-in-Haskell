@@ -1,9 +1,5 @@
 module RunSolution where
 
-import Day1.Solution (calibrationSum1, calibrationSum2)
-import Day2.Solution (gameSum1, gameSum2)
-import Day5.Solution (getLowestLoc1, getLowestLoc2)
-import Day6.Solution (getWaysProd1, getWaysProd2)
 import qualified Day7.Solution as D7
 import qualified Day8.Solution as D8
 import qualified Day9.Solution as D9
