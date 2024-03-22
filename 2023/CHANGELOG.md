@@ -1,17 +1,5 @@
-# Run the following commands in the aoc year directory
+# Revision history for my-hs-package
 
-```bash
-  cd <year>
-```
+## 0.1.0.0 -- YYYY-mm-dd
 
-## Execute
-Provide day as an argument
-
-```bash
-  cabal run aoc.cabal <day>
-```
-
-## Run in Repl
-```bash
-  cabal repl
-```
+* First version. Released on an unsuspecting world.
