@@ -1,6 +1,5 @@
 module Day2.Solution where
-import Data.Char (digitToInt, isDigit)
-import Data.List.Split (splitOneOf)
+import Data.List.Split (splitOneOf) 
 
 
 parseInp :: [String] -> [[(Int, Int, Int, Int)]]
@@ -24,7 +23,7 @@ gameSum1 :: [String] -> Int
 gameSum1 = calculateSum . parseInp
     where
         (tr,tg,tb) = bagConfig
-        calculateSum = foldl (\s g@((gn,_,_,_):rs) -> if checkBounds g then s+gn else s) 0
+        calculateSum = foldl (\s g@((gn,_,_,_):_) -> if checkBounds g then s+gn else s) 0
 
         checkBounds :: [(Int,Int,Int,Int)] -> Bool
         checkBounds [] = True

@@ -1,8 +1,9 @@
 module Day3.Solution where
 
 import Data.Char (isDigit)
-import Data.List (groupBy, findIndex, findIndices, elemIndices,nub)
+import Data.List (groupBy, elemIndices,nub)
 
+trd :: (a, b, c) -> c
 trd (_,_,c) = c
 
 parseInp :: [String] -> [[String]]

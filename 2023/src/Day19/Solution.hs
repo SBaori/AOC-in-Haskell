@@ -1,8 +1,7 @@
 module Day19.Solution where
 import Data.List.Split (splitOn)
 import qualified Data.HashMap as M
-import Control.Monad (guard)
-import Data.List (inits,init)
+import Data.List (inits)
 
 parseInp :: [String] -> ([(String,[[String]])],[[(Char,Int)]])
 parseInp = (\[wf,items] -> (parseWf wf,parseItems items)) . splitOn [""]

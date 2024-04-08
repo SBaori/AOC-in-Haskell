@@ -1,6 +1,6 @@
 module Day11.Solution where
 
-import Data.List (elemIndices, nub, sort, group)
+import Data.List (elemIndices, sort, group)
 
 getGalaxyPos :: [String] -> Int -> [(Int,Int)] -> [(Int,Int)]
 getGalaxyPos [] _ coords = coords

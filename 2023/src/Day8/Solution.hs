@@ -1,6 +1,5 @@
 module Day8.Solution where
 
-import Data.List (mapAccumL)
 import Data.List.Split (splitOneOf)
 import qualified Data.Map as M
 

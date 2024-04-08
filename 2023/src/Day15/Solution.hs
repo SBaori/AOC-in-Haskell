@@ -1,7 +1,7 @@
 module Day15.Solution where
 
 import Data.Char (isDigit, isLetter)
-import Data.List (elemIndex, findIndex, groupBy)
+import Data.List (findIndex, groupBy)
 import Data.List.Split (splitOn)
 import Data.Maybe (isNothing)
 
