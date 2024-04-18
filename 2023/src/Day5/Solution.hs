@@ -1,12 +1,8 @@
 module Day5.Solution where
-import Data.List (groupBy)
+import Data.List (groupBy, foldl', sortBy, minimumBy)
 
 parseInp :: [String] -> [[[Int]]]
 parseInp = (map . map) (map read . words) . filter (\x -> head x /= ";") . groupBy (\x y -> x /= ";" && y /= ";")
-
-
-getSeedLoc :: Int -> [[[Int]]] -> Int
-getSeedLoc = foldl getMap
 
 getMap :: Int -> [[Int]] -> Int
 getMap key [] = key
@@ -14,31 +10,66 @@ getMap key ([ds,ss,l]:hms)
     | key >= ss && key < ss+l = ds-ss+key
     | otherwise = getMap key hms
 
+-- Part 1
+
+getSeedLoc :: Int -> [[[Int]]] -> Int
+getSeedLoc = foldl getMap
+
 getLowestLoc :: [[[Int]]] -> [Int] -> Int
 getLowestLoc mapValues = foldl (\minLoc seed -> min minLoc (getSeedLoc seed mapValues)) (maxBound :: Int)
 
--- Part 1
-
-getLowestLoc1 :: [String] -> Int
-getLowestLoc1 inp = getLowestLoc mapValues seeds
+getPart1 :: [String] -> Int
+getPart1 inp = getLowestLoc mapValues seeds
     where
         pInp = parseInp inp
         mapValues = tail pInp
         seeds = head $ head pInp
 
+-- Part 2
+
+getSeedRangeLoc :: [[Int]] -> [[[Int]]] -> [[Int]]
+getSeedRangeLoc = foldl' helper 
+    where
+        helper :: [[Int]] -> [[Int]] -> [[Int]]
+        helper ranges maps = concatMap (\range -> getRangeMap range sortMaps) ranges
+            where
+                sortMaps = sortBy (\[_,x,_] [_,y,_] -> if x > y then GT else LT) maps
+
+getRangeMap :: [Int] -> [[Int]] -> [[Int]]
+getRangeMap [start, len] maps = helper (start-1) maps []
+    where
+        helper :: Int -> [[Int]] -> [[Int]] -> [[Int]]
+        helper prevInpMapEnd [] res = endVoid ++ res
+            where
+                endVoid = [[prevInpMapEnd + 1, start+len - 1 - prevInpMapEnd] | prevInpMapEnd < (start + len - 1)]
+        helper prevInpEnd (mp@[_, inpStart, mapLen]:mps) res
+            | inpStart > (start+len-1) = endVoid ++ res
+            | (inpStart + mapLen - 1) < start = helper prevInpEnd mps res
+            | otherwise = helper (inpStart+mapLen-1) mps (void ++ [mapStart, mapEnd-mapStart+1]:res)
+            where
+                void = [[prevInpEnd + 1, inpStart-prevInpEnd-1] | (inpStart-prevInpEnd) > 1]
+                endVoid = [[prevInpEnd + 1, start+len - 1 - prevInpEnd] | prevInpEnd < (start + len - 1)]
+                mapStart = getMap (max start inpStart) [mp] 
+                mapEnd = getMap (min (start+len-1) (inpStart+mapLen-1)) [mp] 
+
+getLowestLoc2 :: [[Int]] -> [[[Int]]] -> Int
+getLowestLoc2 seedRanges maps = head $ minimumBy (\r1 r2 -> if head r1 > head r2 then GT else LT) $ getSeedRangeLoc seedRanges maps
 
 -- Part 2
 
-getLowestLoc2 :: [String] -> Int
-getLowestLoc2 inp = helper seedRange (maxBound :: Int)
+getPart2 :: [String] -> Int
+getPart2 inp = getLowestLoc2 seedRanges mapValues 
     where
         pInp = parseInp inp
         mapValues = tail pInp
-        seedRange = head $ head pInp
+        seeds = head $ head pInp
 
-        helper [] minLoc = minLoc
-        helper (s:r:srs) minLoc = helper srs (min minLoc currLoc)
+        seedRanges = helper seeds
             where
-                currLoc = getLowestLoc mapValues [s..s+r-1]
+                helper :: [Int] -> [[Int]]
+                helper [] = []
+                helper (seed:range:seeds) = [seed,range]:helper seeds
+
+
 
 

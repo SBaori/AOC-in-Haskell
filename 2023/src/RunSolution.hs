@@ -36,7 +36,7 @@ runSolution' day = do
             "2" -> (show $ D2.gameSum1 inp, show $ D2.gameSum2 inp)
             "3" -> (show $ D3.partNumSum inp, show $ D3.gearRatioSum inp)
             "4" -> (show $ D4.sumPoints inp, show $ D4.sumScratchCards inp)
-            "5" -> (show $ D5.getLowestLoc1 inp, show $ D5.getLowestLoc2 inp)
+            "5" -> (show $ D5.getPart1 inp, show $ D5.getPart2 inp)
             "6" -> (show $ D6.getWaysProd1 inp, show $ D6.getWaysProd2 inp)
             "7" -> (show $ D7.getPart1 inp, show $ D7.getPart2 inp)
             "8" -> (show $ D8.getPart1 inp, show $ D8.getPart2 inp)
