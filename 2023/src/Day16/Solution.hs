@@ -4,8 +4,6 @@ import Data.Maybe (isJust, fromJust)
 import qualified Data.HashMap as M
 import Data.List (foldl')
 
--- Share map OPTIMIZE!
-
 getLightMods :: [[Char]] -> M.Map (Int, Int) Char
 getLightMods inp = M.fromList $ [((rNum,cNum),char) | (rNum,row) <- zip [0..] inp, (cNum,char) <- zip [0..] row, char /= '.']
 
@@ -18,12 +16,10 @@ getEnergizedCnt ((x,y),dir) lightMods dim@(rNum,cNum) visited
                             '|' -> case dir of
                                         'n' -> getEnergizedCnt ((x-1,y),dir) lightMods dim (M.insertWith (++) (x,y) [dir] visited)
                                         's' -> getEnergizedCnt ((x+1,y),dir) lightMods dim (M.insertWith (++) (x,y) [dir] visited)
-                                        -- _ -> M.union (getEnergizedCnt ((x-1,y),'n') lightMods dim (M.insertWith (++) (x,y) [dir] visited)) (getEnergizedCnt ((x+1,y),'s') lightMods dim (M.insertWith (++) (x,y) [dir] visited))
                                         _ -> foldl' (\v splitPath -> getEnergizedCnt splitPath lightMods dim v) (M.insertWith (++) (x,y) [dir] visited) [((x-1,y),'n'), ((x+1,y),'s')]
                             '-' -> case dir of
                                         'e' -> getEnergizedCnt ((x,y+1),dir) lightMods dim (M.insertWith (++) (x,y) [dir] visited)
                                         'w' -> getEnergizedCnt ((x,y-1),dir) lightMods dim (M.insertWith (++) (x,y) [dir] visited)
-                                        -- _ -> M.union (getEnergizedCnt ((x,y+1),'e') lightMods dim (M.insertWith (++) (x,y) [dir] visited)) (getEnergizedCnt ((x,y-1),'w') lightMods dim (M.insertWith (++) (x,y) [dir] visited))
                                         _ -> foldl' (\v splitPath -> getEnergizedCnt splitPath lightMods dim v) (M.insertWith (++) (x,y) [dir] visited) [((x,y+1),'e'),((x,y-1),'w')]
     | otherwise = getEnergizedCnt (getNewPath '.') lightMods dim (M.insertWith (++) (x,y) [dir] visited)
     where
@@ -64,6 +60,8 @@ getPart1 inp = maximum $
                getStart 1 (rNum,cNum)
         where
             (rNum,cNum) = (length inp,length $ head inp)
+
+-- TODO: Remove/cache all the visited edge points after every run.
 
 getPart2 :: [String] -> Int
 getPart2 inp = maximum $ 
