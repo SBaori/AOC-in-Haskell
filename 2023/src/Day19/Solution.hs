@@ -53,7 +53,7 @@ itemAcceptConds wf wfs = do
     return (cond' ++ m)
 
 getPart2 :: [String] -> Int
-getPart2 inp = foldl (flip ((+) . M.fold (\(l,h) p -> if h>l then (h-l+1)*p else 0) 1 . updateItemRanges)) 0 iac
+getPart2 inp = foldl' (flip ((+) . M.fold (\(l,h) p -> if h>l then (h-l+1)*p else 0) 1 . updateItemRanges)) 0 iac
     where
         (wfs, _) = parseInp inp
         wfsMap = M.fromList wfs
@@ -61,7 +61,7 @@ getPart2 inp = foldl (flip ((+) . M.fold (\(l,h) p -> if h>l then (h-l+1)*p else
         iac = itemAcceptConds "in" wfsMap
 
         itemRanges = M.fromList [('x',(1,4000)),('m',(1,4000)),('a',(1,4000)),('s',(1,4000))]
-        updateItemRanges = foldl helper itemRanges
+        updateItemRanges = foldl' helper itemRanges
 
         helper :: M.Map Char (Int,Int) -> String -> M.Map Char (Int,Int)
         helper ir cond = case head cond of
