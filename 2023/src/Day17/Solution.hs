@@ -27,10 +27,10 @@ dijkstra pq visited maxStep minStep graph
         updPq = S.union pq' (S.fromList nextDirs)
 
         getNextDirs = case dir of
-            'n' ->  [('n', (x-1,y), steps+1) | steps < maxStep] ++ concat [[('w', (x,y-1), 1), ('e', (x,y+1), 1)] | steps >= minStep || steps == 0]
-            'e' ->  [('e', (x,y+1), steps+1) | steps < maxStep] ++ concat [[('n', (x-1,y), 1), ('s', (x+1,y), 1)] | steps >= minStep || steps == 0]
-            's' ->  [('s', (x+1,y), steps+1) | steps < maxStep] ++ concat [[('e', (x,y+1), 1), ('w', (x,y-1), 1)] | steps >= minStep || steps == 0]
-            _ ->    [('w', (x,y-1), steps+1) | steps < maxStep] ++ concat [[('s', (x+1,y), 1), ('n', (x-1,y), 1)] | steps >= minStep || steps == 0]
+            'n' ->  [('n', (x-1,y), steps+1) | steps < maxStep] ++ concat [[('w', (x,y-1), 1), ('e', (x,y+1), 1)] | steps >= minStep]
+            'e' ->  [('e', (x,y+1), steps+1) | steps < maxStep] ++ concat [[('n', (x-1,y), 1), ('s', (x+1,y), 1)] | steps >= minStep]
+            's' ->  [('s', (x+1,y), steps+1) | steps < maxStep] ++ concat [[('e', (x,y+1), 1), ('w', (x,y-1), 1)] | steps >= minStep]
+            _ ->    [('w', (x,y-1), steps+1) | steps < maxStep] ++ concat [[('s', (x+1,y), 1), ('n', (x-1,y), 1)] | steps >= minStep]
 
 
 -- Part 1
@@ -46,7 +46,7 @@ getPart1 = dijkstra pq visited maxStep minStep . parseInp
 getPart2 :: [String] -> Int
 getPart2 = dijkstra pq visited maxStep minStep . parseInp
     where
-        pq = S.singleton (0, (0,0), 'e', 0)
+        pq = S.fromList [(0, (0,0), 'e', 0), (0, (0,0), 's', 0)]
         visited = S.empty
         maxStep = 10
         minStep = 4
