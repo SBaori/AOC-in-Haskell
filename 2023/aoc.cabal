@@ -83,6 +83,7 @@ executable aoc
         Day18.Solution,
         Day19.Solution,
         Day20.Solution,
+        Day22.Solution,
         RunSolution
 
     default-extensions: ParallelListComp
