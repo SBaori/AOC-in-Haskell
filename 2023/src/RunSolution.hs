@@ -4,6 +4,7 @@ import qualified Day7.Solution as D7
 import qualified Day8.Solution as D8
 import qualified Day9.Solution as D9
 import qualified Day11.Solution as D11
+import qualified Day10.Solution as D10
 import qualified Day12.Solution as D12
 import qualified Day13.Solution as D13
 import qualified Day15.Solution as D15
@@ -46,6 +47,7 @@ runSolution' day = do
             "7" -> (show $ D7.getPart1 inp, show $ D7.getPart2 inp)
             "8" -> (show $ D8.getPart1 inp, show $ D8.getPart2 inp)
             "9" -> (show $ D9.getPart1 inp, show $ D9.getPart2 inp)
+            "10" -> (show $ D10.getPart1 inp, show $ D10.getPart2 inp)
             "11" -> (show $ D11.getPart1 inp, show $ D11.getPart2 inp)
             "12" -> (show $ D12.getPart1 inp, show $ D12.getPart2 inp)
             "13" -> (show $ D13.getPart1 inp, show $ D13.getPart2 inp)

@@ -28,13 +28,13 @@ getNextDir dir pipe = case dir of
     where
         (d1,d2) = pipes M.! pipe
 
-getPath :: (Int, Int) -> [[Char]] -> [(Int,Int)] -> Char -> [(Int,Int)]
+getPath :: (Int, Int) -> [[Char]] -> [(Char, (Int,Int))] -> Char -> [(Char, (Int,Int))]
 getPath (x,y) tiles loop dir
-    | tiles !! x !! y == 'S' = (x,y):loop
-    | dir == 'n' = getPath (x-1,y) tiles ((x,y):loop) (getNextDir dir (tiles !! (x-1) !! y))
-    | dir == 's' = getPath (x+1,y) tiles ((x,y):loop) (getNextDir dir (tiles !! (x+1) !! y))
-    | dir == 'e' = getPath (x,y+1) tiles ((x,y):loop) (getNextDir dir (tiles !! x !! (y+1)))
-    | otherwise = getPath (x,y-1) tiles ((x,y):loop) (getNextDir dir (tiles !! x !! (y-1)))
+    | tiles !! x !! y == 'S' = (tiles !! x !! y, (x,y)):loop
+    | dir == 'n' = getPath (x-1,y) tiles ((tiles !! x !! y, (x,y)):loop) (getNextDir dir (tiles !! (x-1) !! y))
+    | dir == 's' = getPath (x+1,y) tiles ((tiles !! x !! y, (x,y)):loop) (getNextDir dir (tiles !! (x+1) !! y))
+    | dir == 'e' = getPath (x,y+1) tiles ((tiles !! x !! y, (x,y)):loop) (getNextDir dir (tiles !! x !! (y+1)))
+    | otherwise = getPath (x,y-1) tiles ((tiles !! x !! y, (x,y)):loop) (getNextDir dir (tiles !! x !! (y-1)))
 
 getStartCoord :: Int -> [String] -> (Int,Int)
 getStartCoord rowNum (r:rs)
@@ -59,22 +59,22 @@ getPart1 inp = floor (fromIntegral (1 + length (getPath (sx,sy) inp [] sDir)) / 
                 else if e /= '.' then ((x,y+1),e)
                 else ((x,y-1),w)
 
-g _ _ count [] _ _ = count
-g t1 t2 count ((x,y):cs) path grid
-    | contains && tile == '|' = g t1 t2 (count+1) cs path grid
-    | contains && tile == 'L' = g '7' t2 count cs path grid
-    | contains && tile == '7' && t1 == '7' = g '.' t2 (count+1) cs path grid
-    | contains && tile == 'F' = g t2 'J' count cs path grid
-    | contains && tile == 'J' && t2 == 'J' = g t1 '.' (count+1) cs path grid
-    | otherwise = g t1 t2 count cs path grid
+getPart2 :: [String] -> Int
+getPart2 inp = area + 1 - div (length path) 2
     where
-        contains = not $ null $ elemIndices (x,y) path
-        tile = grid !! x !! y
+        (x,y) = getStartCoord 0 inp
+        ((sx,sy),sDir) =
+            let
+                n = getNextDir 'n' (inp !! (x-1) !! y)
+                s = getNextDir 's' (inp !! (x+1) !! y)
+                e = getNextDir 'e' (inp !! x !! (y+1))
+                w = getNextDir 'w' (inp !! x !! (y-1))
+            in
+                if n /= '.' then ((x-1,y),n)
+                else if s /= '.' then ((x+1,y),s)
+                else if e /= '.' then ((x,y+1),e)
+                else ((x,y-1),w)
 
-h [] count _ _ = count
-h (r:rs) count path grid = h rs (f r 0 + count) path grid
-    where
-        f [] c = c
-        f (p:ps) c
-            | isNothing (elemIndex p path) = f ps (c + mod (g '.' '.' 0 ps path grid) 2)
-            | otherwise = f ps c
+        path = getPath (sx, sy) inp [] sDir
+        vertices = [(x,y) | (tile, (x,y)) <- path, tile == 'S' || tile == 'F' || tile == '7' || tile == 'J' || tile == 'L']
+        area = div ((abs . sum) $ zipWith (\(x1, y1) (x2, y2) -> x1*y2 - x2*y1) vertices (take (length vertices) $ tail $ cycle vertices)) 2
