@@ -46,6 +46,7 @@ getUpdatedAdjList = M.foldrWithKey updateMap M.empty
             where
                 vk = map (\(adj, d) -> (adj, [(k,d)])) v
 
+-- TODO: Add bitwise visited
 getLongestPath :: S.Set (Int,Int) -> (Int,Int) -> M.Map (Int,Int) [((Int,Int), Int)] -> (Int,Int) -> Int
 getLongestPath v node adjList dest = floor $ head $ helper v node
     where
