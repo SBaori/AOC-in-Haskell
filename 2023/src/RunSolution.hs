@@ -23,6 +23,7 @@ import qualified Day20.Solution as D20
 import qualified Day21.Solution as D21
 import qualified Day22.Solution as D22
 import qualified Day23.Solution as D23
+import qualified Day24.Solution as D24
 
 -- TODO: Extract readfile IO to their respective files
 
@@ -62,6 +63,7 @@ runSolution' day = do
             "20" -> (show $ D20.getPart1 inp, show $ D20.getPart2 inp)
             "22" -> (show $ D22.getPart1 inp, show $ D22.getPart2 inp)
             "23" -> (show $ D23.getPart1 inp, show $ D23.getPart2 inp)
+            "24" -> (show $ D24.getPart1 inp, show $ D24.getPart2 inp)
             _ -> ("","")
 
     putStrLn $ "Part1: " ++ part1 ++ "\nPart2: " ++ part2
