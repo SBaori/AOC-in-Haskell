@@ -17,7 +17,7 @@ Provide day as an argument
 ```
 
 ## Execution Times
-# Note: Single Thread on i5 11th gen
+**Note: Single Thread on i5 11th gen**
 ```diff
 Day 1   | 0.065s
 Day 2   | 0.066s
@@ -58,4 +58,3 @@ done
 
 echo "scale=3; $sum / 10" | bc
 ```
-
