@@ -17,7 +17,7 @@ Provide day as an argument
 ```
 
 ## Execution Times
-```bash
+```diff
 Day 1   | 0.065s
 Day 2   | 0.066s
 Day 3   | 0.084s
@@ -34,7 +34,10 @@ Day 13  | 0.071s
 Day 14  | 0.242s
 Day 15  | 0.106s
 Day 16  | 1.770s
-Day 17  | ~~5.105s~~ 3.582
+
+- Day 17 | 5.105s
++ Day 17 | 3.582s
+
 Day 18  | 0.070s
 Day 19  | 0.080s
 Day 20  | 0.223s
@@ -54,3 +57,4 @@ done
 
 echo "scale=3; $sum / 10" | bc
 ```
+
