@@ -2,9 +2,15 @@ module Day23.Solution where
 
 import qualified Data.Map.Strict as M
 import qualified Data.Set as S
-import Control.Monad (guard, foldM, liftM2, mplus)
-import Data.Maybe (isJust, mapMaybe, fromMaybe)
+import Control.Monad (guard, mplus)
+import Data.Maybe (mapMaybe, fromMaybe)
 import Data.List (foldl')
+import Data.Bits (Bits(testBit, setBit))
+
+newtype Node = Node ((Int,Int), Int)
+    deriving (Eq,Ord,Show)
+
+newtype AdjList = AdjList (M.Map Node [(Node,Int)])
 
 parseInp :: [String] -> M.Map (Int, Int) Char
 parseInp inp = M.fromList $ concat [[((x,y), c) | (c,y) <- zip r [0..], c /= '#'] | (r,x) <- zip inp [0..]]
@@ -12,14 +18,20 @@ parseInp inp = M.fromList $ concat [[((x,y), c) | (c,y) <- zip r [0..], c /= '#'
 getAdjList :: S.Set (Int, Int) 
               -> [(Char, (Int, Int), Int, (Int, Int))] 
               -> M.Map (Int, Int) [((Int, Int), Int)] 
-              -> Int 
+              -> (Int, Int)
               -> M.Map (Int, Int) Char 
-              -> M.Map (Int, Int) [((Int, Int), Int)]
-getAdjList v [] m rowLen graph = m
-getAdjList v ((val, c, i, (x,y)):cs) m rowLen graph
-    | x == rowLen - 1 = getAdjList (S.insert (x,y) v) cs m' rowLen graph
-    | isNode = getAdjList v (map (\(val, _, _, p) -> (val, (x,y), 1, p)) getNextSteps ++ cs) m' rowLen graph
-    | otherwise = getAdjList (S.insert (x,y) v) (getNextSteps ++ cs) m rowLen graph
+              -> AdjList
+getAdjList v [] m (rowLen,colLen) graph = AdjList m'
+    where
+        ml = M.toList m
+        keyIdMap = M.fromList $ zip (map fst ml ++ [(rowLen-1, colLen-2)]) [1..]
+        m' = M.fromList $ map (\(k,v) 
+                            -> (Node (k, keyIdMap M.! k), map (\(n, d) -> (Node (n, keyIdMap M.! n), d)) v)) ml
+
+getAdjList v ((val, c, i, (x,y)):cs) m dim@(rowLen,colLen) graph
+    | x == rowLen - 1 = getAdjList (S.insert (x,y) v) cs m' dim graph
+    | isNode = getAdjList v (map (\(val, _, _, p) -> (val, (x,y), 1, p)) getNextSteps ++ cs) m' dim graph
+    | otherwise = getAdjList (S.insert (x,y) v) (getNextSteps ++ cs) m dim graph
     where
         m' = M.insertWith (++) c [((x,y), i)] m
         getConnections = case val of
@@ -38,45 +50,45 @@ getAdjList v ((val, c, i, (x,y)):cs) m rowLen graph
         isNode = all (\(val, _, _, _) -> val == '>' || val == 'v') getConnections
         getNextSteps = [(val, c, d, (x,y)) | (val, c, d, (x,y)) <- getConnections, S.notMember (x,y) v]
 
-getUpdatedAdjList :: M.Map (Int,Int) [((Int,Int), Int)] -> M.Map (Int,Int) [((Int,Int), Int)]
-getUpdatedAdjList = M.foldrWithKey updateMap M.empty
+getUpdatedAdjList :: AdjList -> AdjList
+getUpdatedAdjList (AdjList l) = M.foldrWithKey updateMap (AdjList M.empty) l
     where
-        updateMap :: (Int,Int) -> [((Int,Int), Int)] -> M.Map (Int,Int) [((Int,Int), Int)] -> M.Map (Int,Int) [((Int,Int), Int)]
-        updateMap k v m = M.unionWith (++) m $ M.fromList ((k,v) : vk)
+        updateMap :: Node -> [(Node, Int)] -> AdjList -> AdjList 
+        updateMap k v (AdjList m) = AdjList $ M.unionWith (++) m $ M.fromList ((k,v) : vk)
             where
-                vk = map (\(adj, d) -> (adj, [(k,d)])) v
+                vk = map (\(k', d) -> (k', [(k, d)])) v
 
--- TODO: Add bitwise visited
-getLongestPath :: S.Set (Int,Int) -> (Int,Int) -> M.Map (Int,Int) [((Int,Int), Int)] -> (Int,Int) -> Int
-getLongestPath v node adjList dest = floor $ head $ helper v node
+getLongestPath :: Node -> AdjList -> Node -> Int
+getLongestPath node (AdjList adjList) dest = head $ helper 0 node
     where
-        helper :: S.Set (Int,Int) -> (Int,Int) -> [Float]
-        helper v node
+        helper :: Int -> Node -> [Int]
+        helper v node@(Node (_, curruid))
             | node == dest = [0]
             | otherwise = do
-                (adjNode, d) <- fromMaybe [] $ M.lookup node adjList
-                guard (S.notMember adjNode v)
+                (adjNode@(Node (_, adjuid)), d) <- fromMaybe [] $ M.lookup node adjList
+                guard (not $ testBit v adjuid)
 
-                let adjDist = helper (S.insert node v) adjNode
-                let fracD = fromIntegral d
+                let adjDist = helper (setBit v curruid) adjNode
 
-                pure $ maximum $ map (+ fracD) adjDist
+                pure $ maximum $ map (+ d) adjDist
                 `mplus`
-                pure (- (1 / 0))
+                pure (minBound :: Int)
 
 getPart1 :: [String] -> Int
-getPart1 inp = getLongestPath S.empty (0,1) adjList (rowLen-1, colLen - 2)
+getPart1 inp = getLongestPath (Node ((0,1),1)) adjList (Node ((rowLen-1, colLen - 2),totNodes))
     where
         pinp = parseInp inp
         rowLen = length inp
         colLen = length $ head inp
-        adjList = getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty rowLen pinp
+        adjList@(AdjList a) = getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty (rowLen,colLen) pinp
+        totNodes = M.size a + 1
 
 getPart2 :: [String] -> Int
-getPart2 inp = getLongestPath S.empty (0,1) adjList (rowLen-1, colLen - 2)
+getPart2 inp = getLongestPath (Node ((0,1),1)) adjList (Node ((rowLen-1, colLen - 2),totNodes))
     where
         pinp = parseInp inp
         rowLen = length inp
         colLen = length $ head inp
-        adjList = getUpdatedAdjList
-                  $ getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty rowLen pinp
+        adjList@(AdjList a) = getUpdatedAdjList
+                  $ getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty (rowLen,colLen) pinp
+        totNodes = M.size a

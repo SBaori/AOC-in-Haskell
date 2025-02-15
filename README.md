@@ -17,7 +17,7 @@ Provide day as an argument
 ```
 
 ## Execution Times
-**Note: Single Thread on i5 11th gen**
+**Note: Single Thread on i5 11th gen unplugged**
 ```diff
 Day 1   | 0.065s
 Day 2   | 0.066s
@@ -43,7 +43,10 @@ Day 18  | 0.070s
 Day 19  | 0.080s
 Day 20  | 0.223s
 Day 22  | 0.430s
-Day 23  | 6.697s
+
+- Day 23 | 6.697s
++ Day 23 | 3.047s
+
 Day 24  | 0.877s
 ```
 
