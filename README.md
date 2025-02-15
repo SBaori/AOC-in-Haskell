@@ -16,7 +16,8 @@ Provide day as an argument
   cabal repl
 ```
 
-## Execution Times (Single Thread on i5 11th gen)
+## Execution Times
+# Note: Single Thread on i5 11th gen
 ```diff
 Day 1   | 0.065s
 Day 2   | 0.066s
