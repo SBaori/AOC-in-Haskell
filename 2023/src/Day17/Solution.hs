@@ -2,24 +2,24 @@ module Day17.Solution where
 
 import qualified Data.Set as S
 import Data.Char (digitToInt)
+import qualified Data.Vector as V
 
-parseInp :: [String] -> [[Int]]
-parseInp = (map.map) digitToInt
+parseInp :: [String] -> V.Vector Int
+parseInp = V.fromList . map digitToInt . concat 
 
--- TODO: change graph :: [[Int]] to graph :: Vector (Vector Int)/graph :: Vector (Int,Int)
-dijkstra :: S.Set (Int, (Int, Int), Char, Int) -> S.Set ((Int, Int), Char, Int) -> Int -> Int -> [[Int]] -> Int
-dijkstra pq visited maxStep minStep graph
-    | (x,y) == (length graph-1, length (head graph) - 1) && steps >= minStep    = heatLoss 
-    | S.member ((x,y), dir, steps) visited                                      = dijkstra pq' visited maxStep minStep graph
-    | otherwise                                                                 = dijkstra updPq updVisited maxStep minStep graph
+dijkstra :: S.Set (Int, Int, (Int, Int), Char) -> S.Set ((Int, Int), Char, Int) -> (Int,Int) -> (Int,Int) -> V.Vector Int -> Int
+dijkstra pq visited (maxStep,minStep) (rn,cn) graph
+    | (x,y) == (rn-1, cn-1) && steps >= minStep                                 = heatLoss 
+    | S.member ((x,y), dir, steps) visited                                      = dijkstra pq' visited (maxStep,minStep) (rn,cn) graph
+    | otherwise                                                                 = dijkstra updPq updVisited (maxStep,minStep) (rn,cn) graph
     where
-        ((heatLoss, (x,y), dir, steps), pq') = S.deleteFindMin pq
+        ((heatLoss, steps, (x,y), dir), pq') = S.deleteFindMin pq
 
-        nextDirs = map (\(dir', (x',y'), s) -> ((graph !! x' !! y') + heatLoss, (x',y'), dir', s))
+        nextDirs = map (\(dir', (x',y'), s) -> ((graph V.! (cn*x' + y')) + heatLoss, s, (x',y'), dir'))
                 $ filter (\(dir', (x',y'), s) -> x' >= 0
                                                 && y' >= 0
-                                                && x' < length graph
-                                                && y' < length (head graph)
+                                                && x' < rn
+                                                && y' < cn
                                                 && S.notMember ((x',y'), dir', s) visited
                         ) getNextDirs
 
@@ -33,20 +33,24 @@ dijkstra pq visited maxStep minStep graph
             _ ->    [('w', (x,y-1), steps+1) | steps < maxStep] ++ concat [[('s', (x+1,y), 1), ('n', (x-1,y), 1)] | steps >= minStep]
 
 
--- Part 1
+-- -- Part 1
 getPart1 :: [String] -> Int
-getPart1 = dijkstra pq visited maxStep minStep . parseInp
+getPart1 inp = dijkstra pq S.empty (maxStep,minStep) (rn,cn) $ parseInp inp
     where
-        pq = S.singleton (0, (0,0), 'e', 0)
+        rn = length inp
+        cn = length $ head inp
+        pq = S.singleton (0, 0, (0,0), 'e')
         visited = S.empty
         maxStep = 3
-        minStep = 1
+        minStep = 0
 
--- Part 2
+-- -- Part 2
 getPart2 :: [String] -> Int
-getPart2 = dijkstra pq visited maxStep minStep . parseInp
+getPart2 inp = dijkstra pq S.empty (maxStep,minStep) (rn,cn) $ parseInp inp
     where
-        pq = S.fromList [(0, (0,0), 'e', 0), (0, (0,0), 's', 0)]
+        rn = length inp
+        cn = length $ head inp
+        pq = S.fromList [(0, 0, (0,0), 'e'), (0, 0, (0,0), 's')]
         visited = S.empty
         maxStep = 10
         minStep = 4
