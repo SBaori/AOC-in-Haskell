@@ -18,36 +18,30 @@ Provide day as an argument
 
 ## Execution Times
 **Note: Single Thread on i5 11th gen unplugged**
-```diff
-Day 1   | 0.065s
-Day 2   | 0.066s
-Day 3   | 0.084s
-Day 4   | 0.079s
-Day 5   | 0.066s
-Day 6   | 0.064s
-Day 7   | 0.086s
-Day 8   | 0.077s
-Day 9   | 0.080s
-Day 10  | 0.087s
-Day 11  | 0.068s
-Day 12  | 0.153s
-Day 13  | 0.071s
-Day 14  | 0.242s
-Day 15  | 0.106s
-Day 16  | 1.770s
-
-- Day 17 | 5.105s
-+ Day 17 | 3.582s
-
-Day 18  | 0.070s
-Day 19  | 0.080s
-Day 20  | 0.223s
-Day 22  | 0.430s
-
-- Day 23 | 6.697s
-+ Day 23 | 3.047s
-
-Day 24  | 0.877s
+```bash
+Day 1   | 0.065s |   -
+Day 2   | 0.066s |   -
+Day 3   | 0.084s |   -
+Day 4   | 0.079s |   -
+Day 5   | 0.066s |   -
+Day 6   | 0.064s |   -
+Day 7   | 0.086s |   -
+Day 8   | 0.077s |   -
+Day 9   | 0.080s |   -
+Day 10  | 0.087s |   -
+Day 11  | 0.068s |   -
+Day 12  | 0.153s |   -
+Day 13  | 0.071s |   -
+Day 14  | 0.242s |   -
+Day 15  | 0.106s |   -
+Day 16  | 1.770s |   -
+Day 17  | 5.105s | 3.582s
+Day 18  | 0.070s |   -
+Day 19  | 0.080s |   -
+Day 20  | 0.223s |   -
+Day 22  | 0.430s |   -
+Day 23  | 6.697s | 3.047s
+Day 24  | 0.877s |   _
 ```
 
 ## Script for Calculating Execution Times
