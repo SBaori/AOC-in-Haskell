@@ -85,6 +85,7 @@ executable aoc
         Day18.Solution,
         Day19.Solution,
         Day20.Solution,
+        Day21.Solution,
         Day22.Solution,
         Day23.Solution,
         Day24.Solution,

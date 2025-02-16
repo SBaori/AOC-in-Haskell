@@ -39,9 +39,10 @@ Day 17  | 5.105s | 3.582s
 Day 18  | 0.070s |   -
 Day 19  | 0.080s |   -
 Day 20  | 0.223s |   -
+Day 21  | 0.100s |   -
 Day 22  | 0.430s |   -
 Day 23  | 6.697s | 3.047s
-Day 24  | 0.877s |   _
+Day 24  | 0.877s |   -
 ```
 
 ## Script for Calculating Execution Times

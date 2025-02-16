@@ -61,6 +61,7 @@ runSolution' day = do
             "19" -> (show $ D19.getPart1 inp, show $ D19.getPart2 inp)
             "18" -> (show $ D18.getPart1 inp, show $ D18.getPart2 inp)
             "20" -> (show $ D20.getPart1 inp, show $ D20.getPart2 inp)
+            "21" -> (show $ D21.getPart1 inp, show $ D21.getPart2 inp)
             "22" -> (show $ D22.getPart1 inp, show $ D22.getPart2 inp)
             "23" -> (show $ D23.getPart1 inp, show $ D23.getPart2 inp)
             "24" -> (show $ D24.getPart1 inp, show $ D24.getPart2 inp)
