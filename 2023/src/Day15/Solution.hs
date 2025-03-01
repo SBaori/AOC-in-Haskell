@@ -12,10 +12,10 @@ hash :: String -> Int
 hash = foldl (\currVal char -> mod (17 * (currVal + fromEnum char)) 256) 0
 
 getPart1 :: [String] -> Int
-getPart1 = sum . map hash . parseInp
+getPart1 = sum . map hash
 
 getPart2 :: [String] -> Int
-getPart2 = sum . map boxPower . hashmap [[] | _ <- [0 .. 255]] . parseInp
+getPart2 = sum . map boxPower . hashmap [[] | _ <- [0 .. 255]]
   where
     boxPower (bNum, lenses) = foldl (\acc (pos, (_, f)) -> acc + (bNum + 1) * pos * f) 0 (zip [loc, loc - 1 .. 1] lenses)
       where
@@ -30,12 +30,10 @@ getPart2 = sum . map boxPower . hashmap [[] | _ <- [0 .. 255]] . parseInp
                  in
                     map
                         ( \items@(bNum, bItems) ->
-                            if bNum == newHash
-                                then (newHash, insertLens bItems (newLabel, action, rest))
-                                else items
-                        )
-                        b
-            )
+                            if bNum == newHash then 
+                                (newHash, insertLens bItems (newLabel, action, rest))
+                            else 
+                                items ) b)
             (zip [0 ..] boxes)
       where
         insertLens bItems (newLabel, action, rest)
@@ -46,3 +44,12 @@ getPart2 = sum . map boxPower . hashmap [[] | _ <- [0 .. 255]] . parseInp
             | otherwise = filter ((/= newLabel) . fst) bItems
           where
             newFl = (read :: String -> Int) $ head rest
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day15/input.txt"
+
+    let part1 = getPart1 pinp
+    let part2 = getPart2 pinp
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

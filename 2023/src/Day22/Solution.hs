@@ -52,23 +52,15 @@ getSupportCover (b:bs) supportCover seenBricks = getSupportCover bs supportCover
         supportCover'' = foldl' (\scm s ->
                                     M.insertWith (\(_, nc) (os, oc) -> (os, nc ++ oc)) (getBrickTuple s) ([], [b]) scm) supportCover' supports
 
-getPart1 :: [String] -> Int
-getPart1 inp = length [sc | sc@(_, (_, covers)) <- M.toList supportCover,
+getPart1 :: M.Map (Int, Int, Int, Int, Int, Int) ([([Int], [Int])], [([Int], [Int])]) -> Int
+getPart1 supportCover = length [sc | sc@(_, (_, covers)) <- M.toList supportCover,
                             all ((\c ->
                                     maybe False ((>1) . length . fst) (M.lookup c supportCover))
                                     . getBrickTuple) covers]
-    where
-        pinp = parseInp inp
-        fallenBricks = getFallenBricks pinp []
-        supportCover = getSupportCover fallenBricks M.empty []
 
-getPart2 :: [String] -> Int
-getPart2 inp = sum $ map (\b -> getDestroyable [b] (S.singleton b)) fallenBricks
+getPart2 :: M.Map (Int, Int, Int, Int, Int, Int) ([([Int], [Int])], [([Int], [Int])]) -> [([Int], [Int])] -> Int
+getPart2 supportCover fallenBricks = sum $ map (\b -> getDestroyable [b] (S.singleton b)) fallenBricks
     where
-        pinp = parseInp inp
-        fallenBricks = getFallenBricks pinp []
-        supportCover = getSupportCover fallenBricks M.empty []
-
         getDestroyable :: [([Int], [Int])] -> S.Set ([Int], [Int]) -> Int
         getDestroyable q destroyable
             | null q' = S.size destroyable - 1
@@ -91,4 +83,15 @@ getPart2 inp = sum $ map (\b -> getDestroyable [b] (S.singleton b)) fallenBricks
                     guard isValid
                     pure cdc
 
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day22/input.txt"
 
+    let fallenBricks = getFallenBricks pinp []
+    let supportCover = getSupportCover fallenBricks M.empty []
+
+
+    let part1 = getPart1 supportCover 
+    let part2 = getPart2 supportCover fallenBricks 
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

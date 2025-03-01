@@ -74,21 +74,26 @@ getLongestPath node (AdjList adjList) dest = head $ helper 0 node
                 `mplus`
                 pure (minBound :: Int)
 
-getPart1 :: [String] -> Int
-getPart1 inp = getLongestPath (Node ((0,1),1)) adjList (Node ((rowLen-1, colLen - 2),totNodes))
+getPart1 :: AdjList -> (Int,Int) -> Int
+getPart1 adjList@(AdjList a) (rNum, cNum) = getLongestPath (Node ((0,1),1)) adjList (Node ((rNum-1, cNum- 2),totNodes))
     where
-        pinp = parseInp inp
-        rowLen = length inp
-        colLen = length $ head inp
-        adjList@(AdjList a) = getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty (rowLen,colLen) pinp
         totNodes = M.size a + 1
 
-getPart2 :: [String] -> Int
-getPart2 inp = getLongestPath (Node ((0,1),1)) adjList (Node ((rowLen-1, colLen - 2),totNodes))
+getPart2 :: AdjList -> (Int,Int) -> Int
+getPart2 adjList (rNum, cNum) = getLongestPath (Node ((0,1),1)) updAdjList (Node ((rNum-1, cNum-2),totNodes))
     where
-        pinp = parseInp inp
-        rowLen = length inp
-        colLen = length $ head inp
-        adjList@(AdjList a) = getUpdatedAdjList
-                  $ getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty (rowLen,colLen) pinp
-        totNodes = M.size a
+        updAdjList@(AdjList ua) = getUpdatedAdjList adjList
+        totNodes = M.size ua 
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day23/input.txt"
+    
+    let pinp = parseInp inp
+    let (rNum, cNum) = (length inp, length $ head inp)
+    let adjList@(AdjList a) = getAdjList S.empty [('.', (0,1), 0, (0,1))] M.empty (rNum,cNum) pinp
+
+    let part1 = getPart1 adjList (rNum, cNum)
+    let part2 = getPart2 adjList (rNum, cNum)
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

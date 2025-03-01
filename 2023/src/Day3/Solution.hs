@@ -25,24 +25,19 @@ checkPoints rowNum colNum rowLen colLen elemLen =
             [(rowNum+1,cn) | rowNum+1<rowLen, cn <- [colNum-1 .. colNum+elemLen], cn > 0, cn < colLen]
 -- Part 1
 -- TODO: convert foldl to parallel list comprehension
-partNumSum :: [String] -> Int
-partNumSum inp = foldl (\s (r,c,n) -> if isValidNum r c (length n) then
+partNumSum :: [String] -> [[String]] -> [(Int, Int, String)] -> (Int,Int) -> Int
+partNumSum inp pinp numCoords (rNum, cNum) = foldl (\s (r,c,n) -> if isValidNum r c (length n) then
                                             s+read n
                                          else
                                             s
                           ) 0 numCoords
     where
-        formatInp = parseInp inp
-        numCoords = getNumCoords 0 [] formatInp
-        rowLen = length inp
-        colLen = length $ head inp
-
         isValidNum :: Int -> Int -> Int -> Bool
-        isValidNum rowNum colNum currStrLen = isSymbol $ checkPoints rowNum colNum rowLen colLen currStrLen
+        isValidNum rowNum colNum currStrLen = isSymbol $ checkPoints rowNum colNum rNum cNum currStrLen
             where
                 prevRow = if rowNum > 0 then inp !! (rowNum-1) else []
                 currRow = inp !! rowNum
-                nextRow = if rowNum + 1 < rowLen then inp !! (rowNum+1) else []
+                nextRow = if rowNum + 1 < rNum then inp !! (rowNum+1) else []
 
                 isSymbol :: [(Int,Int)] -> Bool
                 isSymbol [] = False
@@ -60,13 +55,8 @@ partNumSum inp = foldl (\s (r,c,n) -> if isValidNum r c (length n) then
 
 -- Part 2
 
-gearRatioSum inp = f
+gearRatioSum inp pinp numCoords (rNum, cNum) = f
     where
-        formatInp = parseInp inp
-        numCoords = getNumCoords 0 [] formatInp
-        rowLen = length inp
-        colLen = length $ head inp
-
         -- signature
         getStarCoords _ [] c = c
         getStarCoords rNum (r:rs) c = getStarCoords (rNum+1) rs (nc ++ c)
@@ -78,9 +68,20 @@ gearRatioSum inp = f
         f = foldl (\s c -> s + g c) 0 starCoords
         g (r,c) = if length pn /= 2 then 0 else read (trd $ head pn)*read (trd $ last pn)
             where
-                cp = checkPoints r c rowLen colLen 1
+                cp = checkPoints r c rNum cNum 1
                 h (r',c') = filter (\(r'', c'', n) -> r''==r' && c' >= c'' && c'<(c''+length n))
                 pn = concat $ nub $ map (\x -> h x numCoords) cp
 
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day3/input.txt"
 
+    let pinp = parseInp inp
+    let (rNum, cNum) = (length inp, length $ head inp)
+    let numCoords = getNumCoords 0 [] pinp
+
+    let part1 = partNumSum inp pinp numCoords (rNum, cNum)
+    let part2 = gearRatioSum inp pinp numCoords (rNum, cNum)
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2
 

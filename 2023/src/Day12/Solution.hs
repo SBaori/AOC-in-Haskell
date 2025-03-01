@@ -41,16 +41,22 @@ getCombCount spr sprGrp = last $ last table
                 isValidPlace2 = (length (grpAllSprs prefix) >= cg) && (length prefix < (cg+1) || prefix !! cg /= '#')
 
 -- Part 1
-getPart1 :: [String] -> Int 
-getPart1 = sum
-            . map (uncurry getCombCount)
-            . parseInp
+getPart1 :: [(String, [Int])] -> Int 
+getPart1 = sum . map (uncurry getCombCount)
 
 -- Part 2
-getPart2 :: [String] -> Int
+getPart2 :: [(String, [Int])] -> Int
 getPart2 = sum . map (\(sprgs,grps) -> getCombCount (tail $ unfold 5 $ '?':sprgs) (unfold 5 grps))
-            . parseInp
     where
         unfold n = concat . replicate n
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day12/input.txt"
+
+    let part1 = getPart1 pinp 
+    let part2 = getPart2 pinp
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2
 
 

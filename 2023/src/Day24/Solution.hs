@@ -25,11 +25,10 @@ getIntersectionAndTime s1 s2 = (xi, yi, t1, t2)
         t1 = (xi - dx1)/dvx1
         t2 = (xi - dx2)/dvx2
 
-getPart1 :: [String] -> Int
-getPart1 inp = length $ filter id [check s1 s2 | s1 <- pinp, s2 <- pinp, s1 > s2]
+getPart1 :: [((Int, Int, Int), (Int, Int,Int))] -> Int
+getPart1 pinp = length $ filter id [check s1 s2 | s1 <- pinp, s2 <- pinp, s1 > s2]
     where
-        pinp = parseInp inp
-        
+        check :: ((Int, Int, Int), (Int, Int, Int)) -> ((Int, Int, Int), (Int, Int, Int)) -> Bool
         check s1 s2 = t1 >= 0
                     && t2 >= 0
                     && xi >= 2e14
@@ -40,11 +39,10 @@ getPart1 inp = length $ filter id [check s1 s2 | s1 <- pinp, s2 <- pinp, s1 > s2
                 (xi, yi, t1, t2) = getIntersectionAndTime s1 s2
 
 -- TODO: Try minimizing conversion from Int to Frac and back
-getPart2 :: [String] -> Int
-getPart2 inp = rx + ry + rz
+getPart2 :: [((Int, Int, Int), (Int, Int,Int))] -> Int
+getPart2 pinp = rx + ry + rz
     where
-        pinp = parseInp inp
-
+        getXYIntersection :: [((Int, Int, Int), (Int, Int, Int))] -> [(Int, Int)] -> (Int, Int, Int, Int)
         getXYIntersection _ [] = (0,0,0,0)
         getXYIntersection stones ((rvx, rvy):sps)
             | S.size intersection == 1 = head $ map (\(x,y) -> (x,y,rvx,rvy)) $ S.toList intersection
@@ -64,3 +62,12 @@ getPart2 inp = rx + ry + rz
 
                 t1 = fromIntegral (rx-x1) / fromIntegral (vx1-rvx)
                 t2 = fromIntegral (rx-x2) / fromIntegral (vx2-rvx)
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day24/input.txt"
+    
+    let part1 = getPart1 pinp
+    let part2 = getPart2 pinp
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

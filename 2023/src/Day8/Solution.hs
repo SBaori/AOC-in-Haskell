@@ -25,14 +25,23 @@ getCount loc (d : ds) count hash
     | otherwise = getCount ((hash M.! loc) !! d) ds (count + 1) hash
 
 -- Part 1
-getPart1 :: [String] -> Int
-getPart1 inp = getCount "AAA" (dirs inp) 0 (hash inp)
+getPart1 :: M.Map String [String] -> [Int] -> Int
+getPart1 h d = getCount "AAA" d 0 h
 
 -- Part 2
-getPart2 :: [String] -> Int
-getPart2 inp = foldl (\s loc -> let r = getCount loc d 0 h in floor $ fromIntegral (r * s) / fromIntegral (gcd r s)) 1 startLocs
+getPart2 :: M.Map String [String] -> [Int] -> [(String, [String])] -> Int
+getPart2 h d maps = foldl (\s loc -> let r = getCount loc d 0 h in floor $ fromIntegral (r * s) / fromIntegral (gcd r s)) 1 startLocs
   where
-    h = hash inp
-    d = dirs inp
-    maps = parseMap $ drop 2 inp
     startLocs = map fst $ filter (\(loc, _) -> last loc == 'A') maps
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day8/input.txt"
+    let h = hash inp
+    let d = dirs inp
+    let maps = parseMap $ drop 2 inp
+
+    let part1 = getPart1 h d
+    let part2 = getPart2 h d maps
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

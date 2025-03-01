@@ -42,23 +42,27 @@ bfs startCoord obstacles (w,h) = helper ([startCoord], []) (M.singleton startCoo
                 (f'', b'') = foldl' (\(tf, tb) n -> push n (tf,tb)) (f',b') validNeighbours
                 v' = foldl' (\tv n -> M.insert n (dist + 1) tv) v validNeighbours
 
-getPart1 :: [String] -> Int
-getPart1 inp = M.size $ M.filter (\step -> even step && step < 65) cellStepMap
-    where
-        (startCoord, obstacles) = parseInp inp
-        numRows = length inp
-        numCols = length $ head inp
-        cellStepMap = bfs startCoord (S.fromList obstacles) (numRows, numCols)
+getPart1 :: M.Map (Int, Int) Int -> Int
+getPart1 = M.size . M.filter (\step -> even step && step < 65)
 
-getPart2 :: [String] -> Int
-getPart2 inp = (n+1)*(n+1)*oddFull + n*n*evenFull - (n+1)*oddCorners + n*evenCorners
+getPart2 :: M.Map (Int, Int) Int -> Int
+getPart2 cellStepMap = (n+1)*(n+1)*oddFull + n*n*evenFull - (n+1)*oddCorners + n*evenCorners
     where
-        (startCoord, obstacles) = parseInp inp
-        numRows = length inp
-        numCols = length $ head inp
-        cellStepMap = bfs startCoord (S.fromList obstacles) (numRows, numCols)
         n = 202300
         evenCorners = M.size $ M.filter (\step -> even step && step > 65) cellStepMap
         oddCorners = M.size $ M.filter (\step -> odd step && step > 65) cellStepMap
         evenFull = M.size $ M.filter even cellStepMap
         oddFull = M.size $ M.filter odd cellStepMap
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day21/input.txt"
+
+    let pinp@(startCoord, obstacles) = parseInp inp
+    let (rNum, cNum) = (length inp, length $ head inp)
+    let cellStepMap = bfs startCoord (S.fromList obstacles) (rNum, cNum)
+
+    let part1 = getPart1 cellStepMap
+    let part2 = getPart2 cellStepMap
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

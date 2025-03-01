@@ -48,11 +48,10 @@ compHand h1 h2 groupCard cardMap
 
 -- Part 1
 
-getPart1 :: [String] -> Int
+getPart1 :: [(String,Int)] -> Int
 getPart1 = fst 
             . foldl (\(s,i) (_,v) -> (s+i*v,i+1)) (0,1) 
-            . sortBy (\(h1,v1) (h2,v2) -> compHand h1 h2 group cardToNum) 
-            . parseInp
+            . sortBy (\(h1,v1) (h2,v2) -> compHand h1 h2 group cardToNum)
     where
         cardToNum :: Char -> Int
         cardToNum card = case card of
@@ -66,11 +65,10 @@ getPart1 = fst
 
 -- Part 2
 
-getPart2 :: [String] -> Int
+getPart2 :: [(String,Int)] -> Int
 getPart2 = fst
             . foldl (\(s,i) (_,v) -> (s+i*v,i+1)) (0,1)
             . sortBy (\(h1,v1) (h2,v2) -> compHand h1 h2 virtualHandGroup cardToNum)
-            . parseInp
     where
         cardToNum :: Char -> Int
         cardToNum card = case card of
@@ -92,5 +90,10 @@ getPart2 = fst
                                 LT) 
                         . group $ hand
         
-        
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day7/input.txt"
+    let part1 = getPart1 pinp
+    let part2 = getPart2 pinp
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2
 

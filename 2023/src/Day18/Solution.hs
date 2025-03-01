@@ -25,19 +25,16 @@ getArea vertices = div ((abs . sum) $ zipWith getDeterminant vertices (take len 
 getPerimeter :: [[String]] -> Int
 getPerimeter = foldl' (\s [_, len, _] -> s + read len) 0
 
-getPart1 :: [String] -> Int
-getPart1 inp = 1 + area + div perimeter 2
+getPart1 :: [[String]] -> Int
+getPart1 pinp = 1 + area + div perimeter 2
     where
-        pinp = parseInp inp
         vertices = getVertices pinp
         area = getArea vertices
         perimeter = getPerimeter pinp
 
-getPart2 :: [String] -> Int
-getPart2 inp = 1 + area + div perimeter 2
+getPart2 :: [[String]] -> Int
+getPart2 pinp = 1 + area + div perimeter 2
     where
-        pinp = parseInp inp
-
         pinp' = map (\[_, _, color] -> [getDir $ last color, (show . fst . head) $ readHex $ init color, color]) pinp
             where
                 getDir d = case d of
@@ -49,3 +46,12 @@ getPart2 inp = 1 + area + div perimeter 2
         vertices = getVertices pinp'
         area = getArea vertices
         perimeter = getPerimeter pinp'
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day18/input.txt"
+
+    let part1 = getPart1 pinp
+    let part2 = getPart2 pinp
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

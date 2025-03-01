@@ -9,14 +9,14 @@ matchCount :: [[Int]] -> Int
 matchCount [winCards,normalCards] = foldl (\count card -> count + if not (null (elemIndices card winCards)) then 1 else 0) 0 normalCards
 
 -- Part 1
-sumPoints :: [String] -> Double
-sumPoints = foldl (\x y -> x + let r = matchCount y in if r == 0 then 0 else 2**(fromIntegral r - 1)) 0 . parseInp
+sumPoints :: [[[Int]]] -> Double
+sumPoints = foldl (\x y -> x + let r = matchCount y in if r == 0 then 0 else 2**(fromIntegral r - 1)) 0
 
 -- Part 2
-sumScratchCards :: [String] -> Int
-sumScratchCards inp = sum $ cardCounts currMatchNums []
+sumScratchCards :: [[[Int]]] -> Int
+sumScratchCards pinp = sum $ cardCounts currMatchNums []
     where
-        matchNums = map matchCount $ parseInp inp
+        matchNums = map matchCount pinp
         currMatchNums = tail $ reverse $ tails $ reverse matchNums
 
         cardCounts :: [[Int]] -> [Int] -> [Int]
@@ -28,3 +28,10 @@ sumScratchCards inp = sum $ cardCounts currMatchNums []
                                                                         else 
                                                                             (step+1,count+cn)
                                             ) (1,1) $ zip prevMatchNums $ tail cmn
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day4/input.txt"
+    let part1 = sumPoints pinp
+    let part2 = sumScratchCards pinp
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

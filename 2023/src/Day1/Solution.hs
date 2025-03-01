@@ -41,3 +41,9 @@ getCalibrationValue2 s@(c:cs) t u
             | isDigit c = (digitToInt c,cs)
             | otherwise = (0,cs)
 
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day1/input.txt"
+    let part1 = calibrationSum1 inp
+    let part2 = calibrationSum2 inp
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

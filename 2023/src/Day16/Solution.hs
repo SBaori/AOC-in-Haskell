@@ -54,19 +54,26 @@ getStart part (rNum,cNum)
                   [((r,0),'e') | r <- [0..rNum-1]] ++
                   [((rNum-1,c),'n') | c <- [0..cNum-1]]
 
-getPart1 :: [String] -> Int
-getPart1 inp = maximum $ 
-               map (\start -> M.size $ getEnergizedCnt start (getLightMods inp) (rNum,cNum) M.empty) $ 
-               getStart 1 (rNum,cNum)
-        where
-            (rNum,cNum) = (length inp,length $ head inp)
+getPart1 :: M.Map (Int, Int) Char -> (Int,Int) -> Int
+getPart1 lightMods (rNum, cNum) = maximum $ 
+                                    map (\start -> M.size $ getEnergizedCnt start lightMods (rNum,cNum) M.empty) $ 
+                                    getStart 1 (rNum,cNum)
 
 -- TODO: Remove/cache all the visited edge points after every run.
 
-getPart2 :: [String] -> Int
-getPart2 inp = maximum $ 
-               map (\start -> M.size $ getEnergizedCnt start lightMods (rNum,cNum) M.empty) $ 
-               getStart 2 (length inp,length $ head inp) 
-        where
-            lightMods = getLightMods inp
-            (rNum,cNum) = (length inp,length $ head inp)
+getPart2 :: M.Map (Int, Int) Char -> (Int,Int) -> Int
+getPart2 lightMods (rNum, cNum) = maximum $ 
+                                    map (\start -> M.size $ getEnergizedCnt start lightMods (rNum,cNum) M.empty) $ 
+                                    getStart 2 (rNum, cNum) 
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day16/input.txt"
+
+    let lightMods = getLightMods inp
+    let (rNum,cNum) = (length inp,length $ head inp)
+
+    let part1 = getPart1 lightMods (rNum, cNum)
+    let part2 = getPart2 lightMods (rNum, cNum)
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

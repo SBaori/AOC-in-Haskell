@@ -43,38 +43,34 @@ getStartCoord rowNum (r:rs)
     where
         colNum = elemIndices 'S' r
 
-getPart1 :: [String] -> Int
-getPart1 inp = floor (fromIntegral (1 + length (getPath (sx,sy) inp [] sDir)) / 2)
-    where
-        (x,y) = getStartCoord 0 inp
-        ((sx,sy),sDir) =
-            let
-                n = getNextDir 'n' (inp !! (x-1) !! y)
-                s = getNextDir 's' (inp !! (x+1) !! y)
-                e = getNextDir 'e' (inp !! x !! (y+1))
-                w = getNextDir 'w' (inp !! x !! (y-1))
-            in
-                if n /= '.' then ((x-1,y),n)
-                else if s /= '.' then ((x+1,y),s)
-                else if e /= '.' then ((x,y+1),e)
-                else ((x,y-1),w)
+getPart1 :: [(Char, (Int, Int))] -> Int
+getPart1 path = floor (fromIntegral (1 + length path) / 2)
 
-getPart2 :: [String] -> Int
-getPart2 inp = area + 1 - div (length path) 2
+getPart2 :: [(Char, (Int, Int))] -> Int
+getPart2 path = area + 1 - div (length path) 2
     where
-        (x,y) = getStartCoord 0 inp
-        ((sx,sy),sDir) =
-            let
-                n = getNextDir 'n' (inp !! (x-1) !! y)
-                s = getNextDir 's' (inp !! (x+1) !! y)
-                e = getNextDir 'e' (inp !! x !! (y+1))
-                w = getNextDir 'w' (inp !! x !! (y-1))
-            in
-                if n /= '.' then ((x-1,y),n)
-                else if s /= '.' then ((x+1,y),s)
-                else if e /= '.' then ((x,y+1),e)
-                else ((x,y-1),w)
-
-        path = getPath (sx, sy) inp [] sDir
         vertices = [(x,y) | (tile, (x,y)) <- path, tile == 'S' || tile == 'F' || tile == '7' || tile == 'J' || tile == 'L']
         area = div ((abs . sum) $ zipWith (\(x1, y1) (x2, y2) -> x1*y2 - x2*y1) vertices (take (length vertices) $ tail $ cycle vertices)) 2
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day10/input.txt"
+
+    let (x,y) = getStartCoord 0 inp
+    let ((sx,sy),sDir) =
+            let
+                n = getNextDir 'n' (inp !! (x-1) !! y)
+                s = getNextDir 's' (inp !! (x+1) !! y)
+                e = getNextDir 'e' (inp !! x !! (y+1))
+                w = getNextDir 'w' (inp !! x !! (y-1))
+            in
+                if n /= '.' then ((x-1,y),n)
+                else if s /= '.' then ((x+1,y),s)
+                else if e /= '.' then ((x,y+1),e)
+                else ((x,y-1),w)
+    let path = getPath (sx, sy) inp [] sDir
+
+    let part1 = getPart1 path
+    let part2 = getPart2 path
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

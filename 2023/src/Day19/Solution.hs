@@ -31,10 +31,9 @@ itemRes item wf wfs
                     'a' -> item !! 2
                     _ -> last item
 
-getPart1 :: [String] -> Int
-getPart1 inp = foldl' (\res i -> res + if (itemRes i "in" wfsMap == "A") then sum (map snd i) else 0) 0 items
+getPart1 :: ([(String,[[String]])],[[(Char,Int)]]) -> Int
+getPart1 (wfs, items) = foldl' (\res i -> res + if itemRes i "in" wfsMap == "A" then sum (map snd i) else 0) 0 items
     where
-        (wfs, items) = parseInp inp
         wfsMap = M.fromList wfs
 
 -- Part 2
@@ -52,10 +51,9 @@ itemAcceptConds wf wfs = do
     m <- itemAcceptConds nextWf' wfs
     return (cond' ++ m)
 
-getPart2 :: [String] -> Int
-getPart2 inp = foldl' (flip ((+) . M.fold (\(l,h) p -> if h>l then (h-l+1)*p else 0) 1 . updateItemRanges)) 0 iac
+getPart2 :: ([(String,[[String]])],[[(Char,Int)]]) -> Int
+getPart2 (wfs, _) = foldl' (flip ((+) . M.fold (\(l,h) p -> if h>l then (h-l+1)*p else 0) 1 . updateItemRanges)) 0 iac
     where
-        (wfs, _) = parseInp inp
         wfsMap = M.fromList wfs
 
         iac = itemAcceptConds "in" wfsMap
@@ -72,3 +70,12 @@ getPart2 inp = foldl' (flip ((+) . M.fold (\(l,h) p -> if h>l then (h-l+1)*p els
                 '>' -> M.insertWith (\(a,_) (b,d) -> (max a b,d)) (cond !! 0) (read (drop 2 cond)+1,0) ir
                 '<' -> M.insertWith (\(_,a) (d,b) -> (d,min a b)) (cond !! 0) (0,read (drop 2 cond)-1) ir
                 _ -> ir
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day19/input.txt"
+
+    let part1 = getPart1 pinp
+    let part2 = getPart2 pinp
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

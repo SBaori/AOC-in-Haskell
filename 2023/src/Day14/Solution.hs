@@ -20,19 +20,14 @@ flipCoords inds len = map (sort.snd) $ M.toList $ invCMap inds
 calcLoad :: Int -> [[Int]] -> Int
 calcLoad colLen = (foldl'.foldl') ((-) . (colLen+)) 0
 
-getPart1 :: [String] -> Int
-getPart1 inp = calcLoad (length inp) 
+getPart1 :: [String] -> Int -> Int
+getPart1 pinp rowNum = calcLoad rowNum
                 $ map (\x -> shift (elemIndices 'O' x) ((-1):elemIndices '#' x ++ [length x]) True) pinp
-    where
-        pinp = transpose inp
 
-getPart2 :: [String] -> Int
-getPart2 inp = calcLoad (length inp) $ flipCoords (runRotations 0 M.empty rotations) rowNum
+getPart2 :: [String] -> [String] -> Int -> Int -> Int
+getPart2 pinp inp rowNum colNum = calcLoad rowNum $ flipCoords (runRotations 0 M.empty rotations) rowNum
     where
-        tinp = transpose inp
-        rowNum = length inp
-        colNum = length tinp
-        hashesNS = map (\x -> (-1):elemIndices '#' x ++ [rowNum]) tinp
+        hashesNS = map (\x -> (-1):elemIndices '#' x ++ [rowNum]) pinp
         hashesWE = map (\x -> (-1):elemIndices '#' x ++ [colNum]) inp
 
         circles = map (elemIndices 'O') inp
@@ -55,3 +50,16 @@ getPart2 inp = calcLoad (length inp) $ flipCoords (runRotations 0 M.empty rotati
             | otherwise = runRotations (i+1) (M.insert g i hash) gs
             where
                 check = M.lookup g hash
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day14/input.txt"
+
+    let pinp = transpose inp
+    let rowNum = length inp
+    let colNum = length inp
+
+    let part1 = getPart1 pinp rowNum
+    let part2 = getPart2 pinp inp rowNum colNum
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

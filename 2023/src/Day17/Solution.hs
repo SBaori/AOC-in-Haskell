@@ -34,23 +34,31 @@ dijkstra pq visited (maxStep,minStep) (rn,cn) graph
 
 
 -- -- Part 1
-getPart1 :: [String] -> Int
-getPart1 inp = dijkstra pq S.empty (maxStep,minStep) (rn,cn) $ parseInp inp
+getPart1 :: V.Vector Int -> (Int,Int) -> Int
+getPart1 pinp (rNum, cNum) = dijkstra pq S.empty (maxStep,minStep) (rNum,cNum) pinp
     where
-        rn = length inp
-        cn = length $ head inp
         pq = S.singleton (0, 0, (0,0), 'e')
         visited = S.empty
         maxStep = 3
         minStep = 0
 
 -- -- Part 2
-getPart2 :: [String] -> Int
-getPart2 inp = dijkstra pq S.empty (maxStep,minStep) (rn,cn) $ parseInp inp
+getPart2 :: V.Vector Int -> (Int,Int) -> Int
+getPart2 pinp (rNum, cNum) = dijkstra pq S.empty (maxStep,minStep) (rNum,cNum) pinp
     where
-        rn = length inp
-        cn = length $ head inp
         pq = S.fromList [(0, 0, (0,0), 'e'), (0, 0, (0,0), 's')]
         visited = S.empty
         maxStep = 10
         minStep = 4
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day17/input.txt"
+    
+    let pinp = parseInp inp
+    let (rNum,cNum) = (length inp, length $ head inp)
+
+    let part1 = getPart1 pinp (rNum, cNum)
+    let part2 = getPart2 pinp (rNum, cNum)
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

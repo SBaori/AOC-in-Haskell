@@ -48,11 +48,9 @@ getNextPulse q adjListMap outStates conInvAdjListMap (high, low) = (q', high', l
 
 
 
-getPart1 :: [String] -> Int
-getPart1 inp = getTotalHighLowProduct 1001 
+getPart1 :: (M.Map String [String], M.Map String Bool, M.Map String [String]) -> Int
+getPart1 (adjListMap, outState, conInvAdjListMap) = getTotalHighLowProduct 1001 
     where
-        (adjListMap, outState, conInvAdjListMap) = parseInp inp
-
         getTotalHighLowProduct :: Int -> Int
         getTotalHighLowProduct numPress = (\(h,l,_) -> h*l) $
                                     last $
@@ -67,11 +65,9 @@ getPart1 inp = getTotalHighLowProduct 1001
                     where
                         (q', h', l', os') = getNextPulse q adjListMap os conInvAdjListMap (h,l)
 
-getPart2 :: [String] -> Int
-getPart2 inp = foldr lcm 1 $ getCycleLength rxGrandParent
+getPart2 :: (M.Map String [String], M.Map String Bool, M.Map String [String]) -> Int
+getPart2 (adjListMap, outState, conInvAdjListMap) = foldr lcm 1 $ getCycleLength rxGrandParent
     where
-        (adjListMap, outState, conInvAdjListMap) = parseInp inp
-
         rxParent = concatMap (\(p,c) -> ([p | elem "rx" c])) (M.toList adjListMap)
         rxGrandParent = concatMap (\rp -> concat $ M.lookup rp conInvAdjListMap) rxParent
 
@@ -99,3 +95,12 @@ getPart2 inp = foldr lcm 1 $ getCycleLength rxGrandParent
                                                 map (,numPress) highNodes
 
                         seenNodes = M.size highNodeCyclesMap
+
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day20/input.txt"
+
+    let part1 = getPart1 pinp
+    let part2 = getPart2 pinp
+
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

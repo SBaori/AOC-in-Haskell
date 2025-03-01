@@ -22,8 +22,8 @@ parseInp1 inp = zip (head p) (last p)
     where
         p = map (concatMap (map read . words) . tail . splitOn ":") inp
 
-getWaysProd1 :: [String] -> Int
-getWaysProd1 = foldl (\mul r -> mul*getWinCount r) 1 . parseInp1
+getWaysProd1 :: [(Int,Int)] -> Int
+getWaysProd1 = foldl (\mul r -> mul*getWinCount r) 1
 
 -- Part 2
 
@@ -32,5 +32,14 @@ parseInp2 inp = (read $ head p,read $ last p)
     where
         p = map (concatMap (concat . words) . tail . splitOn ":") inp
     
-getWaysProd2:: [String] -> Int
-getWaysProd2 = getWinCount . parseInp2
+getWaysProd2:: (Int,Int) -> Int
+getWaysProd2 = getWinCount
+
+run :: IO ()
+run = do
+    inp <- lines <$> readFile "src/Day6/input.txt"
+    let pinp1 = parseInp1 inp
+    let pinp2 = parseInp2 inp
+    let part1 = getWaysProd1 pinp1
+    let part2 = getWaysProd2 pinp2
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2

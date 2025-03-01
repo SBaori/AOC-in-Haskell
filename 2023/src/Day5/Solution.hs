@@ -18,12 +18,8 @@ getSeedLoc = foldl getMap
 getLowestLoc :: [[[Int]]] -> [Int] -> Int
 getLowestLoc mapValues = foldl (\minLoc seed -> min minLoc (getSeedLoc seed mapValues)) (maxBound :: Int)
 
-getPart1 :: [String] -> Int
-getPart1 inp = getLowestLoc mapValues seeds
-    where
-        pInp = parseInp inp
-        mapValues = tail pInp
-        seeds = head $ head pInp
+getPart1 :: [[[Int]]] -> [Int] -> Int
+getPart1 = getLowestLoc
 
 -- Part 2
 
@@ -57,19 +53,22 @@ getLowestLoc2 seedRanges maps = head $ minimumBy (\r1 r2 -> if head r1 > head r2
 
 -- Part 2
 
-getPart2 :: [String] -> Int
-getPart2 inp = getLowestLoc2 seedRanges mapValues 
+getPart2 :: [[[Int]]] -> [Int] -> Int
+getPart2 mapValues seeds = getLowestLoc2 seedRanges mapValues 
     where
-        pInp = parseInp inp
-        mapValues = tail pInp
-        seeds = head $ head pInp
-
         seedRanges = helper seeds
             where
                 helper :: [Int] -> [[Int]]
                 helper [] = []
                 helper (seed:range:seeds) = [seed,range]:helper seeds
 
-
+run :: IO ()
+run = do
+    pinp <- parseInp . lines <$> readFile "src/Day5/input.txt"
+    let mapValues = tail pinp
+    let seeds = head $ head pinp
+    let part1 = getPart1 mapValues seeds
+    let part2 = getPart2 mapValues seeds
+    putStrLn $ "Part1: " ++ show part1 ++ "\nPart2: " ++ show part2
 
 
