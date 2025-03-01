@@ -43,13 +43,16 @@ Day 21  | 0.100s |   -
 Day 22  | 0.430s |   -
 Day 23  | 6.697s | 3.047s
 Day 24  | 0.877s |   -
+Day 25  | 0.100s |   -
+
+Total: 9.724s
 ```
 
 ## Script for Calculating Execution Times
 ```bash
 sum=0
 for i in {1..10}; do
-	t=$((time cabal run aoc.cabal $1) 2>&1 | grep real | awk '{split($2, a, "m"); print a[1] * 60 + a[2]}')
+	t=$((time cabal run aoc.cabal $*) 2>&1 | grep real | awk '{split($2, a, "m"); print a[1] * 60 + a[2]}')
 	sum=$(echo "$sum + $t" | bc)
 	echo $t
 done
