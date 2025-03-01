@@ -5,6 +5,8 @@
 ```
 
 ## Execute
+**Note: Make sure you have placed your input.txt files in their respective directories.**
+
 Provide day as an argument
 
 ```bash
