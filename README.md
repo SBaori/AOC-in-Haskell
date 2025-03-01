@@ -51,11 +51,13 @@ Total: 9.724s
 ## Script for Calculating Execution Times
 ```bash
 sum=0
-for i in {1..10}; do
+runs=10
+
+for i in $(seq 1 $runs); do
 	t=$((time cabal run aoc.cabal $*) 2>&1 | grep real | awk '{split($2, a, "m"); print a[1] * 60 + a[2]}')
 	sum=$(echo "$sum + $t" | bc)
 	echo $t
 done
 
-echo "scale=3; $sum / 10" | bc
+echo "scale=3; $sum / $runs" | bc
 ```
