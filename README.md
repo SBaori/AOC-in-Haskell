@@ -19,7 +19,7 @@ Provide day as an argument
 ```
 
 ## Execution Times
-**Note: Single Thread on i5 11th gen unplugged**
+**Note: Single Thread on i5 11th gen**
 ```bash
 Day 1   | 0.065s |   -
 Day 2   | 0.066s |   -
