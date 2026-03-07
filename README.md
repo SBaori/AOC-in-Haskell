@@ -19,46 +19,25 @@ Provide day as an argument
 ```
 
 ## Execution Times
-**Note: Single Thread on i5 11th gen**
+**Note: CPU - Intel Core Ultra 9 285H**
 ```bash
-Day 1   | 0.065s |   -
-Day 2   | 0.066s |   -
-Day 3   | 0.084s |   -
-Day 4   | 0.079s |   -
-Day 5   | 0.066s |   -
-Day 6   | 0.064s |   -
-Day 7   | 0.086s |   -
-Day 8   | 0.077s |   -
-Day 9   | 0.080s |   -
-Day 10  | 0.087s |   -
-Day 11  | 0.068s |   -
-Day 12  | 0.153s |   -
-Day 13  | 0.071s |   -
-Day 14  | 0.242s |   -
-Day 15  | 0.106s |   -
-Day 16  | 1.770s |   -
-Day 17  | 5.105s | 3.582s
-Day 18  | 0.070s |   -
-Day 19  | 0.080s |   -
-Day 20  | 0.223s |   -
-Day 21  | 0.100s |   -
-Day 22  | 0.430s |   -
-Day 23  | 6.697s | 3.047s
-Day 24  | 0.877s |   -
-Day 25  | 0.100s |   -
-
-Total: 9.724s
+2023 - 8.416 sec
 ```
 
 ## Script for Calculating Execution Times
 ```bash
+#!/bin/bash
+
+taskset -p -c 2 $$ > /dev/null
+
 sum=0
 runs=10
 
 for i in $(seq 1 $runs); do
-	t=$((time cabal run aoc.cabal $*) 2>&1 | grep real | awk '{split($2, a, "m"); print a[1] * 60 + a[2]}')
+	t=$((/usr/bin/time -f "%U %S" cabal run aoc.cabal $*) 2>&1 | tail -1 | awk '{print $1 + $2}')
 	sum=$(echo "$sum + $t" | bc)
-	echo $t
+	echo "$i: $t"
+	sleep 1
 done
 
 echo "scale=3; $sum / $runs" | bc
