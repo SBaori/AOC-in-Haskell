@@ -64,6 +64,7 @@ executable aoc
     ghc-options: -O2
     -- Modules included in this executable, other than Main.
     other-modules:
+        Day1.Solution,
         Day2.Solution,
         Day4.Solution,
         Day5.Solution,

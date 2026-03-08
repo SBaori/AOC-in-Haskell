@@ -1,5 +1,6 @@
 module RunSolution where
 
+import qualified Day1.Solution as D1
 import qualified Day2.Solution as D2
 import qualified Day4.Solution as D4
 import qualified Day6.Solution as D6
@@ -14,7 +15,7 @@ import qualified Day10.Solution as D10
 runSolution :: String -> IO ()
 runSolution day = do
     case day of
-        -- "1" -> D1.run
+        "1" -> D1.run
         "2" -> D2.run
         -- "3" -> D3.run
         "4" -> D4.run
