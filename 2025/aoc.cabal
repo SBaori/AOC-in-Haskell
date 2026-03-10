@@ -66,6 +66,7 @@ executable aoc
     other-modules:
         Day1.Solution,
         Day2.Solution,
+        Day3.Solution,
         Day4.Solution,
         Day5.Solution,
         Day6.Solution,
