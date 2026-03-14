@@ -22,6 +22,7 @@ Provide day as an argument
 **Note: CPU - Intel Core Ultra 9 285H**
 ```bash
 2023 - 8.416 sec
+2025 - 2.403 sec
 ```
 
 ## Script for Calculating Execution Times
