@@ -4,6 +4,7 @@ import Data.List.Split (splitOn, chunksOf)
 import qualified Data.IntMap.Strict as IM
 import Data.Maybe (isJust, mapMaybe)
 import Data.List (sort, groupBy)
+import Utils (printSolution)
 
 mergeRanges [] _ acc =  reverse 
                         $ concat 
@@ -18,12 +19,12 @@ mergeRanges ((num, t):ps) stack@((num', t'):sts) acc
     | t == 'e' = mergeRanges ps sts acc
     | otherwise = mergeRanges ps ((num,t):stack) acc
 
-part1 queries rangeMap = length
-                            $ filter (\(_, t) -> t == 'b')
-                            $ mapMaybe (`IM.lookupLT` rangeMap) queries
+availableFresh queries rangeMap = length
+                                    $ filter (\(_, t) -> t == 'b')
+                                    $ mapMaybe (`IM.lookupLT` rangeMap) queries
 
-part2 :: [(Int, Char)] -> Int
-part2 = sum . map (\[(numb, _), (nume, _)] -> nume - numb + 1) . chunksOf 2 
+allFresh :: [(Int, Char)] -> Int
+allFresh = sum . map (\[(numb, _), (nume, _)] -> nume - numb + 1) . chunksOf 2 
 
 parseInp :: String -> ([(Int, Char)], [Int])
 parseInp inp = (ranges, queries)
@@ -34,5 +35,18 @@ parseInp inp = (ranges, queries)
                                 -> [(read s, 'b'), (read e, 'e')]
                             ) . splitOn "-"
                         ) (head inp')
+
+run :: IO ()
+run = do
+    pinp <- parseInp <$> readFile "src/Day5/input.txt"
+
+    let (ranges, queries) = pinp
+    let mergedRanges = mergeRanges ranges [] []
+
+    let part1 = availableFresh queries $ IM.fromList mergedRanges
+    let part2 = allFresh mergedRanges
+
+    printSolution(show part1, show part2)
+    
 
 
