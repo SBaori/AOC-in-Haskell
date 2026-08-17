@@ -29,13 +29,11 @@ Provide day as an argument
 ```bash
 #!/bin/bash
 
-taskset -p -c 2 $$ > /dev/null
-
 sum=0
 runs=10
 
 for i in $(seq 1 $runs); do
-	t=$((/usr/bin/time -f "%U %S" cabal run aoc.cabal $*) 2>&1 | tail -1 | awk '{print $1 + $2}')
+	t=$((/usr/bin/time -f "%U %S" taskset -c 2 cabal run aoc.cabal $*) 2>&1 | tail -1 | awk '{print $1 + $2}')
 	sum=$(echo "$sum + $t" | bc)
 	echo "$i: $t"
 	sleep 1
